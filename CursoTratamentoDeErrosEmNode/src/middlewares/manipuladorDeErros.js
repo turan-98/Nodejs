@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import ErroBase from "../Erros/ErroBase.js";
 import RequestError from "../Erros/RequestError.js";
 import ValidationError from "../Erros/ValidationError.js";
+import notFound from "../Erros/notFound.js";
 // middleware de erro, caracterizado por sempre ter 4 parametros
 // essa função vai capturar todo tipo de erro.
 // assim ajuda a evitar a repetição de código.
@@ -16,6 +17,8 @@ function manipuladorDeErros(erro, req, res, next) {
       new RequestError().sendAnswer(res);
     else if(erro instanceof mongoose.Error.ValidationError )
       new ValidationError(erro).sendAnswer(res);
+    else if(erro instanceof notFound)
+      erro.sendAnswer(res);
     else
       new ErroBase().sendAnswer(res);
   }

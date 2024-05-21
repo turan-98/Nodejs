@@ -1,3 +1,4 @@
+import notFound from "../Erros/notFound.js";
 import livros from "../models/Livro.js";
 
 class LivroController {
@@ -22,7 +23,9 @@ class LivroController {
         .populate("autor", "nome")
         .exec();
 
-      res.status(200).send(livroResultados);
+      if(livroResultados != null) res.status(200).send(livroResultados);
+      else next(new notFound('Livro não encontrado'));
+      
     } catch (erro) {
       next(erro)
     }
@@ -43,10 +46,11 @@ class LivroController {
   static atualizarLivro = async (req, res, next) => {
     try {
       const id = req.params.id;
-
       await livros.findByIdAndUpdate(id, {$set: req.body});
 
-      res.status(200).send({message: "Livro atualizado com sucesso"});
+      if(livros != null) res.status(200).send({message: "Livro atualizado com sucesso"});
+      else next(new notFound('Livro não encontrado'));
+
     } catch (erro) {
       next(erro)
     }
@@ -55,10 +59,11 @@ class LivroController {
   static excluirLivro = async (req, res, next) => {
     try {
       const id = req.params.id;
-
       await livros.findByIdAndDelete(id);
 
-      res.status(200).send({message: "Livro removido com sucesso"});
+      if(livros != null) res.status(200).send({message: "Livro removido com sucesso"});
+      else next(new notFound('Livro não encontrado'));
+
     } catch (erro) {
       next(erro)
     }
