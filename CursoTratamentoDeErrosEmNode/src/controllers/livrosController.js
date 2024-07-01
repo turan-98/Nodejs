@@ -71,14 +71,7 @@ class LivroController {
 
   static listarLivroPorFiltro = async (req, res, next) => {
     try {
-      const {editora, titulo} = req.query;
-     
-      const busca = {}
-
-      if(editora) busca.editora = editora
-      // Regex para busca case insensitive em títulos de livros.
-      // funciona como o contais.
-      if(titulo) busca.titulo = { $regex: titulo, $options: 'i' };
+      const busca = processaBusca(req.body);
       
       const livrosResultado = await livros.find(busca);
 
@@ -91,3 +84,21 @@ class LivroController {
 }
 
 export default LivroController
+
+function processaBusca(params) {
+
+  const {editora, titulo, minPage, maxPage} = params;
+
+  const busca = {};
+
+  if(editora) busca.editora = editora
+  // Regex para busca case insensitive em títulos de livros, funciona como o contais.
+  if(titulo) busca.titulo = { $regex: titulo, $options: 'i' };
+
+  if(minPage || maxPage) busca.numeroPaginas ={};
+
+  if(minPage) busca.numeroPaginas.$gte = minPage;
+  if(maxPage) busca.numeroPaginas.$lte = maxPage;
+
+  return busca;
+}
