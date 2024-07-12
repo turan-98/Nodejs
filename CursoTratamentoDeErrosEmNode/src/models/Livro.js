@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import autopopulate from "mongoose-autopopulate";
 const livroSchema = new mongoose.Schema(
   {
     id: {type: String},
@@ -8,16 +8,13 @@ const livroSchema = new mongoose.Schema(
       required: [true, "O título do livro é obrigatório"]
     },
     autor: {
-      type: mongoose.Schema.Types.ObjectId, 
-      required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'autores',
+      autopopulate: {select:'nome'}
     },
     editora: {
       type: String, 
-      required: [true, "O título do livro é obrigatório"],
-      enum:{
-        values:["Casa do códgio", "Alura"],
-        message:"A editora {VALUE} não é um valor permitido."
-      }
+      required: [true, "O título do livro é obrigatório"]
     },
     numeroPaginas: {
       type: Number,
@@ -31,7 +28,7 @@ const livroSchema = new mongoose.Schema(
     }
   }
 );
-
+livroSchema.plugin(autopopulate);
 const livros= mongoose.model('livros', livroSchema);
 
 export default livros;
